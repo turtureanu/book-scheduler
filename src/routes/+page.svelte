@@ -6,6 +6,7 @@
 
 	const toastStore = getToastStore();
 	import { goto } from '$app/navigation';
+	import Scheduler from '../components/Scheduler.svelte';
 
 	const noBookToast: ToastSettings = {
 		hideDismiss: true,
@@ -33,9 +34,7 @@
 <Toast rounded="rounded-md" padding="px-3 py-2" />
 
 {#if $scheduleStore.length !== 0}
-	{#each $scheduleStore as book}
-		{book}
-	{/each}
+	<Scheduler />
 {:else}
 	<div class="flex h-full flex-col items-center justify-center">
 		<button class="btn rounded-md bg-primary-800" onclick={populateSchedule}

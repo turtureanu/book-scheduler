@@ -17,7 +17,9 @@
 	let bookName: Book['name'] = $state('');
 	let bookAuthor: Book['author'] = $state('');
 	let bookPages: Book['pages'] = $state(0);
-	let nextID: Book['id'] = $state(1);
+	let nextID: Book['id'] = $state(
+		bookStore.get().length > 0 ? bookStore.get()[bookStore.get().length - 1].id + 1 : 0
+	);
 
 	const resetForm = () => {
 		bookName = '';
@@ -25,10 +27,11 @@
 		bookPages = 0;
 	};
 
+	let hello = $state('');
 	const addBook = () => {
 		if (bookName && bookPages >= 0) {
+			nextID += 1;
 			bookStore.update((books: Book[]) => {
-				nextID += 1;
 				books.push({
 					id: nextID,
 					name: bookName,
@@ -37,6 +40,8 @@
 				});
 				return books;
 			});
+
+			hello = `hello ${drawerStore.close()}`;
 			resetForm();
 			drawerStore.close();
 		}
