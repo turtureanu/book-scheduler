@@ -2,14 +2,12 @@
 	import { scheduleStore } from '../stores/schedule';
 	import { bookStore, type Book } from '../stores/books';
 
-	let isPopulated = $state(scheduleStore.get().length === 0 ? false : true);
-
 	import { getToastStore, Toast, type ToastSettings } from '@skeletonlabs/skeleton';
 
 	const toastStore = getToastStore();
 	import { goto } from '$app/navigation';
 
-	const t: ToastSettings = {
+	const noBookToast: ToastSettings = {
 		hideDismiss: true,
 		message: 'No books found!',
 		action: {
@@ -19,26 +17,29 @@
 	};
 
 	const populateSchedule = () => {
-		const books = bookStore.get() || [];
-		const newSchedule = books.map((book: Book) => {
-			return { book: book };
+		const books = $bookStore || [];
+		$scheduleStore = books.map((b: Book) => {
+			return { book: b };
 		});
 
-		if (newSchedule.length === 0) {
+		if ($bookStore.length === 0) {
 			toastStore.clear();
-			toastStore.trigger(t);
-		} else {
-			console.log(newSchedule, books);
-			scheduleStore.update(() => newSchedule);
-			isPopulated = isPopulated;
+			toastStore.trigger(noBookToast);
+			return;
 		}
 	};
 </script>
 
 <Toast rounded="rounded-md" padding="px-3 py-2" />
 
-<div class="flex h-full flex-col items-center justify-center">
-	<button class="btn rounded-md bg-primary-800" onclick={populateSchedule}
-		>Populate collection</button
-	>
-</div>
+{#if $scheduleStore.length !== 0}
+	{#each $scheduleStore as book}
+		{book}
+	{/each}
+{:else}
+	<div class="flex h-full flex-col items-center justify-center">
+		<button class="btn rounded-md bg-primary-800" onclick={populateSchedule}
+			>Populate schedule</button
+		>
+	</div>
+{/if}

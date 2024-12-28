@@ -2,6 +2,7 @@
 	import Icon from '@iconify/svelte';
 	import { Drawer, getDrawerStore, type DrawerSettings } from '@skeletonlabs/skeleton';
 	import { bookStore, type Book } from '../../stores/books';
+	import { scheduleStore, type Schedule } from '../../stores/schedule';
 
 	const drawerStore = getDrawerStore();
 
@@ -13,10 +14,10 @@
 		shadow: ''
 	};
 
-	let bookName = $state('');
-	let bookAuthor = $state('');
-	let bookPages = $state(0);
-	let nextID = $state(1);
+	let bookName: Book['name'] = $state('');
+	let bookAuthor: Book['author'] = $state('');
+	let bookPages: Book['pages'] = $state(0);
+	let nextID: Book['id'] = $state(1);
 
 	const resetForm = () => {
 		bookName = '';
@@ -25,7 +26,7 @@
 	};
 
 	const addBook = () => {
-		if (bookName && bookPages > 0) {
+		if (bookName && bookPages >= 0) {
 			bookStore.update((books: Book[]) => {
 				nextID += 1;
 				books.push({
@@ -43,6 +44,10 @@
 
 	const handleDelete = (id: number) => {
 		bookStore.set(bookStore.get().filter((book) => book.id !== id));
+		// remove the book from the schedule as well
+		scheduleStore.update((schedule: Schedule) =>
+			schedule.filter((_, i) => !$scheduleStore.findIndex((b) => b.book.id === i))
+		);
 	};
 
 	const handleEdit = (id: number) => {
@@ -102,7 +107,7 @@
 					<div class="text-center">
 						{book.author?.length! > 16 ? book.author?.slice(0, 16) + '…' : book.author}
 					</div>
-					<div class="text-center">{book.pages} pages</div>
+					<div class="text-center">{book.pages === 0 ? 'N/A' : book.pages} pages</div>
 				</div>
 				<div class="flex items-center">
 					<button class="btn p-4 hover:text-amber-400" onclick={() => handleEdit(book.id)}>

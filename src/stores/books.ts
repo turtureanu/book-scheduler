@@ -4,7 +4,7 @@ export type Book = {
 	id: number;
 	name: string;
 	author?: string;
-	pages?: number;
+	pages: number;
 };
 
 export const bookStore = arrayStore<Book[]>({
