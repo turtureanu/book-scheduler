@@ -42,6 +42,7 @@
 	"dependencies": {
 		"@capacitor/core": "^6.2.0",
 		"@capacitor/preferences": "^6.0.3",
+		"@rodrigodagostino/svelte-sortable-list": "^0.10.10",
 		"svelte-capacitor-store": "^0.3.6"
 	}
 }

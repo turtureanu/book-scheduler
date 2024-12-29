@@ -27,7 +27,6 @@
 		bookPages = 0;
 	};
 
-	let hello = $state('');
 	const addBook = () => {
 		if (bookName && bookPages >= 0) {
 			nextID += 1;
@@ -41,7 +40,6 @@
 				return books;
 			});
 
-			hello = `hello ${drawerStore.close()}`;
 			resetForm();
 			drawerStore.close();
 		}
@@ -49,10 +47,6 @@
 
 	const handleDelete = (id: number) => {
 		bookStore.set(bookStore.get().filter((book) => book.id !== id));
-		// remove the book from the schedule as well
-		scheduleStore.update((schedule: Schedule) =>
-			schedule.filter((_, i) => !$scheduleStore.findIndex((b) => b.book.id === i))
-		);
 	};
 
 	const handleEdit = (id: number) => {
@@ -143,6 +137,7 @@
 		margin: 0;
 	}
 	input[type='number'] {
+		appearance: textfield;
 		-moz-appearance: textfield;
 	}
 </style>
