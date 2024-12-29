@@ -95,7 +95,7 @@
 <div class="m-auto flex max-w-2xl flex-col justify-between p-4">
 	<div class="flex flex-col gap-4">
 		{#each $bookStore as book (book.id)}
-			<div class="flex items-center justify-between rounded-lg bg-surface-600 px-4 py-2">
+			<div class="flex items-center justify-between gap-x-6 rounded-lg bg-surface-600 px-4 py-2">
 				<div class="flex w-full items-center justify-between">
 					<div class="flex gap-4">
 						<Icon icon="mdi-book" class="self-center text-2xl" />
@@ -109,11 +109,11 @@
 					<div class="text-center">{book.pages === 0 ? 'N/A' : book.pages} pages</div>
 				</div>
 				<div class="flex items-center">
-					<button class="btn p-4 hover:text-amber-400" onclick={() => handleEdit(book.id)}>
-						<Icon icon="mdi-edit" />
+					<button class="btn px-2 py-4" onclick={() => handleEdit(book.id)}>
+						<Icon class="text-2xl" icon="mdi-edit" />
 					</button>
-					<button class="btn p-4 hover:text-red-400" onclick={() => handleDelete(book.id)}>
-						<Icon icon="mdi-trash" />
+					<button class="btn px-2 py-4" onclick={() => handleDelete(book.id)}>
+						<Icon class="text-2xl" icon="mdi-trash" />
 					</button>
 				</div>
 			</div>

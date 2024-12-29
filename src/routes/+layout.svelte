@@ -30,6 +30,6 @@
 	}
 
 	#currentPage {
-		animation: fadeIn 150ms ease-in-out;
+		animation: fadeIn 250ms ease-in;
 	}
 </style>
