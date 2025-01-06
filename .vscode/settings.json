@@ -1,0 +1,7 @@
+{
+    "workbench.tree.indent": 10,
+    "workbench.colorCustomizations": {
+        "tree.indentGuidesStroke": "#a0a0a0"
+    },
+    "workbench.editor.wrapTabs": true
+}
