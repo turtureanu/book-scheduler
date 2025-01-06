@@ -22,7 +22,7 @@
 		active="bg-surface-700"
 		rounded="rounded-lg"
 		border=""
-		class="sticky bottom-0 w-full bg-surface-500 px-2 py-1"
+		class="fixed bottom-0 z-10 w-full bg-surface-500 px-2 py-1"
 	>
 		<TabAnchor class="mr-1.5 w-24" href="/" selected={$page.url.pathname === '/'}>
 			<svelte:fragment slot="lead">

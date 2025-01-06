@@ -1,1 +1,6 @@
 [x] Add the option to update schedule after adding or deleting a book
+[ ] Add support for notification reminders
+[x] Add an editing mode to the schedule screen
+[-] Add a threaded vertical view and maybe make it the default when not editing
+[x] Fix scrolling on sortable list issue (https://github.com/rodrigodagostino/svelte-sortable-list/issues/12)
+    // fixed by @rodrigodagostino

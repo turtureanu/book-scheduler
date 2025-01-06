@@ -1,25 +1,29 @@
 <script lang="ts">
 	import Icon from '@iconify/svelte';
 	import { Drawer, getDrawerStore, type DrawerSettings } from '@skeletonlabs/skeleton';
+
 	import { bookStore, type Book } from '../../stores/books';
-	import { scheduleStore, type Schedule } from '../../stores/schedule';
+
+	import { fade } from 'svelte/transition';
+	import { linear } from 'svelte/easing';
 
 	const drawerStore = getDrawerStore();
 
+	//  bottom drawer
 	const drawerSettings: DrawerSettings = {
-		id: 'add-book',
+		id: 'book-popup-menu',
 		position: 'bottom',
 		height: 'h-fit',
 		bgDrawer: 'bg-transparent',
 		shadow: ''
 	};
 
+	// variables used in bottom drawer form
 	let bookName: Book['name'] = $state('');
 	let bookAuthor: Book['author'] = $state('');
 	let bookPages: Book['pages'] = $state(0);
-	let nextID: Book['id'] = $state(
-		bookStore.get().length > 0 ? bookStore.get()[bookStore.get().length - 1].id + 1 : 0
-	);
+
+	let checkedBooks = $state($bookStore.map((_) => false));
 
 	const resetForm = () => {
 		bookName = '';
@@ -27,34 +31,49 @@
 		bookPages = 0;
 	};
 
-	const addBook = () => {
+	const handleDelete = (id: number) => {
+		bookStore.set(bookStore.get().filter((book) => book.id !== id));
+		checkedBooks = $bookStore.map((_) => false);
+	};
+
+	let editing = $state({ id: -1, isBeingEdited: false });
+
+	const handleEdit = (id: number) => {
+		editing.id = id;
+		editing.isBeingEdited = true;
+
+		let { name, author, pages } = $bookStore.filter((book) => book.id == id)[0];
+		bookName = name;
+		bookAuthor = author || '';
+		bookPages = pages || 0;
+		drawerStore.open(drawerSettings);
+	};
+
+	const handleBook = () => {
 		if (bookName && bookPages >= 0) {
-			nextID += 1;
 			bookStore.update((books: Book[]) => {
-				books.push({
-					id: nextID,
-					name: bookName,
-					author: bookAuthor,
-					pages: bookPages
-				});
+				if (editing.isBeingEdited) {
+					const editedBook = books.filter((e) => e.id === editing.id)[0];
+
+					editedBook.name = bookName;
+					editedBook.author = bookAuthor;
+					editedBook.pages = bookPages;
+					editing.isBeingEdited = false;
+				} else {
+					books.push({
+						id: books.length > 0 ? books.slice(-1)[0].id + 1 : 0,
+						name: bookName,
+						author: bookAuthor,
+						pages: bookPages
+					});
+				}
+
 				return books;
 			});
 
 			resetForm();
 			drawerStore.close();
 		}
-	};
-
-	const handleDelete = (id: number) => {
-		bookStore.set(bookStore.get().filter((book) => book.id !== id));
-	};
-
-	const handleEdit = (id: number) => {
-		let { name, author, pages } = bookStore.get().filter((book) => book.id == id)[0];
-		bookName = name;
-		bookAuthor = author || '';
-		bookPages = pages || 0;
-		drawerStore.open(drawerSettings);
 	};
 </script>
 
@@ -84,8 +103,8 @@
 				<button class="btn w-20 px-2 py-1.5 text-lg" onclick={() => drawerStore.close()}>
 					Cancel
 				</button>
-				<button class="btn w-20 rounded-md bg-success-700 px-2 py-1.5 text-lg" onclick={addBook}>
-					Add
+				<button class="btn w-20 rounded-md bg-success-700 px-2 py-1.5 text-lg" onclick={handleBook}>
+					Save
 				</button>
 			</div>
 		</div>
@@ -93,29 +112,63 @@
 </Drawer>
 
 <div class="m-auto flex max-w-2xl flex-col justify-between p-4">
-	<div class="flex flex-col gap-4">
+	<div class="mb-24 flex flex-col gap-3">
 		{#each $bookStore as book (book.id)}
-			<div class="flex items-center justify-between gap-x-6 rounded-lg bg-surface-600 px-4 py-2">
-				<div class="flex w-full items-center justify-between">
-					<div class="flex gap-4">
-						<Icon icon="mdi-book" class="self-center text-2xl" />
-						<div class="max-w-36 text-lg font-bold leading-6">
-							{book.name.length! > 28 ? book.name.slice(0, 28).trim() + '…' : book.name}
+			<div>
+				<input
+					type="checkbox"
+					class="hidden"
+					bind:checked={checkedBooks[$bookStore.indexOf(book)]}
+					name={`check-${book.id}`}
+					id={`check-${book.id}`}
+				/>
+				<label for={`check-${book.id}`} class="cursor-pointer">
+					<div class="flex items-center justify-between rounded-lg bg-surface-600 px-2 py-5">
+						<Icon icon="mdi-book" class="mx-2 w-6 min-w-6 text-2xl" />
+						<div
+							class="w-full overflow-hidden text-ellipsis whitespace-nowrap text-lg font-bold leading-6"
+						>
+							{book.name.trim()}
+						</div>
+						<Icon
+							icon="octicon:chevron-up-12"
+							rotate={1}
+							class={`mr-5 w-6 text-2xl transition-all duration-150 ${checkedBooks[$bookStore.indexOf(book)] ? 'rotate-90' : ''}`}
+						/>
+					</div>
+				</label>
+				{#if checkedBooks[$bookStore.indexOf(book)]}
+					<div
+						transition:fade={{ duration: 150, easing: linear }}
+						class="mt-3 rounded-md bg-surface-500 p-3 text-lg"
+					>
+						<div class="mt-2 flex justify-between gap-x-2 px-3 py-2">
+							<span class="font-bold">Author:</span>
+							<span class="overflow-hidden text-ellipsis text-nowrap">
+								{#if book.author}
+									{book.author.trim()}
+								{:else}
+									N/A
+								{/if}
+							</span>
+						</div>
+						<div class="mb-2 flex justify-between px-3">
+							<span class="font-bold">Pages:</span>
+
+							{#if book.pages}
+								{book.pages}
+							{:else}
+								N/A
+							{/if}
+						</div>
+						<div class="mt-4 flex justify-end gap-x-4 px-1 py-2">
+							<button class="btn rounded-md" onclick={() => handleDelete(book.id)}> Delete </button>
+							<button class="btn rounded-md bg-secondary-700" onclick={() => handleEdit(book.id)}>
+								Edit
+							</button>
 						</div>
 					</div>
-					<div class="text-center">
-						{book.author?.length! > 16 ? book.author?.slice(0, 16) + '…' : book.author}
-					</div>
-					<div class="text-center">{book.pages === 0 ? 'N/A' : book.pages} pages</div>
-				</div>
-				<div class="flex items-center">
-					<button class="btn px-2 py-4" onclick={() => handleEdit(book.id)}>
-						<Icon class="text-2xl" icon="mdi-edit" />
-					</button>
-					<button class="btn px-2 py-4" onclick={() => handleDelete(book.id)}>
-						<Icon class="text-2xl" icon="mdi-trash" />
-					</button>
-				</div>
+				{/if}
 			</div>
 		{/each}
 	</div>

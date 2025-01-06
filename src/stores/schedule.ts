@@ -1,12 +1,11 @@
-import { arrayStore } from 'svelte-capacitor-store';
+import { arrayStore, objectStore } from 'svelte-capacitor-store';
 import type { Book } from './books';
-import { Temporal } from 'temporal-polyfill';
 
 export type Schedule =
 	| {
 			book: Book;
-			from?: Temporal.PlainDateTime;
-			until?: Temporal.PlainDateTime;
+			from?: string;
+			until?: string;
 	  }[]
 	| [];
 
@@ -15,3 +14,16 @@ export const scheduleStore = arrayStore<Schedule>({
 	initialValue: [],
 	persist: true
 });
+
+export const sortedScheduleType = objectStore({
+	storeName: 'isSortedSchedule',
+	initialValue: 'manual-sort',
+	persist: true
+});
+
+// todo(maybe): save and restore manually saved schedule
+// export const manuallySortedSchedule = arrayStore<Schedule>({
+// 	storeName: 'manually-sorted-schedule',
+// 	initialValue: [],
+// 	persist: true
+// });
