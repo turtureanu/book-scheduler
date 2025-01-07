@@ -4,3 +4,4 @@
 [-] Add a threaded vertical view and maybe make it the default when not editing
 [x] Fix scrolling on sortable list issue (https://github.com/rodrigodagostino/svelte-sortable-list/issues/12)
     // fixed by @rodrigodagostino
+[x] Add logo and screenshots
