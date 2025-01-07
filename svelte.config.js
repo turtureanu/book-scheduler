@@ -1,8 +1,7 @@
 import adapter from '@sveltejs/adapter-static';
 import { vitePreprocess } from '@sveltejs/vite-plugin-svelte';
 
-/** @type {import('@sveltejs/kit').Config} */
-const config = {
+export default {
 	// Consult https://svelte.dev/docs/kit/integrations
 	// for more information about preprocessors
 	preprocess: vitePreprocess(),
@@ -14,7 +13,9 @@ const config = {
 		adapter: adapter({
 			pages: 'dist'
 		})
+	},
+	compilerOptions: {
+		// disable all warnings coming from node_modules and all accessibility warnings
+		warningFilter: (warning) => !warning.filename?.includes('node_modules')
 	}
 };
-
-export default config;
