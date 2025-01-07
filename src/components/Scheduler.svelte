@@ -8,7 +8,12 @@
 
 	import Icon from '@iconify/svelte';
 
-	import { scheduleStore, sortedScheduleType, type Schedule } from '../stores/schedule';
+	import {
+		scheduleStore,
+		sortedScheduleType,
+		isUpdateDismissed,
+		type Schedule
+	} from '../stores/schedule';
 	import { bookStore } from '../stores/books';
 	import DateInput from './DateInput.svelte';
 	import { ProgressBar } from '@skeletonlabs/skeleton';
@@ -27,19 +32,23 @@
 	// return true if they have been changed
 	const checkUpdateBooks = () => {
 		const bookIds = new Set($bookStore.map((book) => book.id));
-		return $scheduleStore.some(
+		const result = $scheduleStore.some(
 			(e) =>
 				bookIds.has(e.book.id) &&
 				(e.book.name !== $bookStore.find((b) => b.id === e.book.id)?.name ||
 					e.book.author !== $bookStore.find((b) => b.id === e.book.id)?.author ||
 					e.book.pages !== $bookStore.find((b) => b.id === e.book.id)?.pages)
 		);
+
+		if ($isUpdateDismissed) {
+			return false;
+		} else {
+			return true;
+		}
 	};
 
-	let isScheduleUpdateDismissed = $state(!checkUpdateBooks());
-
 	const handleUpdate = () => {
-		isScheduleUpdateDismissed = true;
+		$isUpdateDismissed = false;
 		scheduleStore.update((schedule: Schedule) => {
 			const existingBookIds = new Set(schedule.map((el) => el.book.id));
 			const updatedSchedule = $bookStore.map((book) => {
@@ -98,12 +107,10 @@
 	};
 </script>
 
-{#if $scheduleStore.length !== $bookStore.length || !isScheduleUpdateDismissed}
+{#if checkUpdateBooks()}
 	<div class="flex w-full items-baseline justify-center bg-slate-800 p-1">
 		<p>Schedule is out of date</p>
-		<button class="btn px-4 font-bold" onclick={() => (isScheduleUpdateDismissed = true)}
-			>dismiss</button
-		>
+		<button class="btn px-4 font-bold" onclick={() => ($isUpdateDismissed = true)}>dismiss</button>
 		<button
 			class="btn rounded-md bg-secondary-900 px-4 py-2 font-bold text-secondary-200"
 			onclick={handleUpdate}>update</button

@@ -1,4 +1,4 @@
-import { arrayStore, objectStore } from 'svelte-capacitor-store';
+import { arrayStore, objectStore, variableStore } from 'svelte-capacitor-store';
 import type { Book } from './books';
 
 export type Schedule =
@@ -15,9 +15,15 @@ export const scheduleStore = arrayStore<Schedule>({
 	persist: true
 });
 
-export const sortedScheduleType = objectStore({
+export const sortedScheduleType = variableStore({
 	storeName: 'isSortedSchedule',
 	initialValue: 'manual-sort',
+	persist: true
+});
+
+export const isUpdateDismissed = variableStore({
+	storeName: 'isUpdateDismissed',
+	initialValue: false,
 	persist: true
 });
 

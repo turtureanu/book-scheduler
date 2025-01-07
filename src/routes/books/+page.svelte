@@ -6,6 +6,7 @@
 
 	import { fade } from 'svelte/transition';
 	import { linear } from 'svelte/easing';
+	import { isUpdateDismissed } from '../../stores/schedule';
 
 	const drawerStore = getDrawerStore();
 
@@ -71,6 +72,7 @@
 				return books;
 			});
 
+			$isUpdateDismissed = false;
 			resetForm();
 			drawerStore.close();
 		}
