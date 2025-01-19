@@ -43,4 +43,5 @@ Other components used:
 
 ## License
 
-Project is licensede under the [GPLv3 license](./LICENSE) unless stated otherwise.
+All code in this project is licensed under the [GPLv3 license](./LICENSE) unless stated otherwise.
+Project dependencies listed in Credits have their own licenses and are not sublicensable under the GPLv3 license of this project unless stated otherwise.
