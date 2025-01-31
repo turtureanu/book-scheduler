@@ -31,20 +31,34 @@
 	// check if any book properties have been changed
 	// return true if they have been changed
 	const checkUpdateBooks = () => {
-		const bookIds = new Set($bookStore.map((book) => book.id));
-		const result = $scheduleStore.some(
-			(e) =>
-				bookIds.has(e.book.id) &&
-				(e.book.name !== $bookStore.find((b) => b.id === e.book.id)?.name ||
-					e.book.author !== $bookStore.find((b) => b.id === e.book.id)?.author ||
-					e.book.pages !== $bookStore.find((b) => b.id === e.book.id)?.pages)
-		);
-
 		if ($isUpdateDismissed) {
 			return false;
-		} else {
-			return true;
 		}
+		let scheduledBooks: Book[] = $scheduleStore.map((el) => {
+			if (el.book.author) {
+				return {
+					id: el.book.id,
+					name: el.book.name,
+					author: el.book.author,
+					pages: el.book.pages
+				};
+			} else {
+				return {
+					id: el.book.id,
+					name: el.book.name,
+					pages: el.book.pages
+				};
+			}
+		});
+
+		if (
+			scheduledBooks.length === $bookStore.length &&
+			scheduledBooks.every((e, i) => JSON.stringify(e) === JSON.stringify($bookStore[i]))
+		) {
+			return false;
+		}
+
+		return true;
 	};
 
 	const handleUpdate = () => {
