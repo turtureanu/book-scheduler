@@ -57,12 +57,11 @@
 		) {
 			return false;
 		}
-
 		return true;
 	};
 
 	const handleUpdate = () => {
-		$isUpdateDismissed = false;
+		$isUpdateDismissed = true;
 		scheduleStore.update((schedule: Schedule) => {
 			const existingBookIds = new Set(schedule.map((el) => el.book.id));
 			const updatedSchedule = $bookStore.map((book) => {
@@ -119,6 +118,17 @@
 
 		return schedule;
 	};
+
+	// return a negative or positive integer value (days)
+	// the range is inclusive
+	const getDateRange = (start: string | Date | undefined, end: string | Date | undefined) => {
+		if (start && end) {
+			const dayDiff: number =
+				(new Date(end).getTime() - new Date(start).getTime()) / (1000 * 60 * 60 * 24);
+
+			return dayDiff > 0 ? Math.ceil(dayDiff) + 1 : Math.ceil(dayDiff) - 1;
+		}
+	};
 </script>
 
 {#if checkUpdateBooks()}
@@ -157,29 +167,22 @@
 					<div class="mt-6 flex w-fit min-w-48 flex-col justify-around">
 						<div>
 							<p class="text-center text-4xl font-bold">
-								{Math.ceil(
-									(Number(new Date(currentBook()!.until)) - Number(new Date())) /
-										(1000 * 60 * 60 * 24)
-								)}
+								{#if getDateRange(new Date(), currentBook().until) > 0}
+									{getDateRange(new Date(), currentBook().until)}
+								{:else}
+									{-getDateRange(new Date(), currentBook().until)}
+								{/if}
 							</p>
 							<p class="text-center text-2xl">
-								day{Math.ceil(
-									(Number(new Date(currentBook()!.until)) - Number(new Date())) /
-										(1000 * 60 * 60 * 24)
-								) === 1
-									? ''
-									: 's'} left
+								day{getDateRange(new Date(), currentBook().until) === 1 ? '' : 's'}
+								{getDateRange(new Date(), currentBook().until) > 0 ? 'left' : 'behind'}
 							</p>
 						</div>
 						<ProgressBar
 							class="mt-2 h-3"
-							value={(Number(new Date(currentBook().until)) -
-								Number(new Date(currentBook().from))) /
-								(1000 * 60 * 60 * 24) -
-								(Number(new Date(currentBook()!.until)) - Number(new Date())) /
-									(1000 * 60 * 60 * 24)}
-							max={(Number(new Date(currentBook().until)) - Number(new Date(currentBook().from))) /
-								(1000 * 60 * 60 * 24)}
+							value={getDateRange(currentBook().from, currentBook().until) -
+								getDateRange(new Date(), currentBook().until)}
+							max={getDateRange(currentBook().from, currentBook().until)}
 						/>
 					</div>
 				{/if}
