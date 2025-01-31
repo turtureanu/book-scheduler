@@ -44,7 +44,7 @@
 		"@capacitor/device": "^6.0.2",
 		"@capacitor/keyboard": "^6.0.3",
 		"@capacitor/preferences": "^6.0.3",
-		"@rodrigodagostino/svelte-sortable-list": "^0.10.13",
+		"@rodrigodagostino/svelte-sortable-list": "0.10.13",
 		"@types/bowser": "^1.1.5",
 		"bowser-ultralight": "^1.0.6",
 		"install": "^0.13.0",
