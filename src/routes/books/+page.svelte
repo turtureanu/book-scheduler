@@ -35,6 +35,7 @@
 	const handleDelete = (id: number) => {
 		bookStore.set(bookStore.get().filter((book) => book.id !== id));
 		checkedBooks = $bookStore.map((_) => false);
+		$isUpdateDismissed = false;
 	};
 
 	let editing = $state({ id: -1, isBeingEdited: false });

@@ -31,10 +31,7 @@
 	// check if any book properties have been changed
 	// return true if they have been changed
 	const checkUpdateBooks = () => {
-		if ($isUpdateDismissed) {
-			return false;
-		}
-		let scheduledBooks: Book[] = $scheduleStore.map((el) => {
+		const scheduledBooks: Book[] = $scheduleStore.map((el) => {
 			if (el.book.author) {
 				return {
 					id: el.book.id,
@@ -55,6 +52,9 @@
 			scheduledBooks.length === $bookStore.length &&
 			scheduledBooks.every((e, i) => JSON.stringify(e) === JSON.stringify($bookStore[i]))
 		) {
+			return false;
+		}
+		if ($isUpdateDismissed) {
 			return false;
 		}
 		return true;

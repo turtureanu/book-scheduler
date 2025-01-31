@@ -1,4 +1,4 @@
-import { arrayStore, objectStore, variableStore } from 'svelte-capacitor-store';
+import { arrayStore, variableStore } from 'svelte-capacitor-store';
 import type { Book } from './books';
 
 export type Schedule =
@@ -6,6 +6,7 @@ export type Schedule =
 			book: Book;
 			from?: string;
 			until?: string;
+			hasBeenRead?: boolean;
 	  }[]
 	| [];
 
