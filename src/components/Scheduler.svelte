@@ -87,21 +87,18 @@
 		});
 	};
 
-	let scheduleSortType = $state($sortedScheduleType);
 	let handleListSort = () => {
 		scheduleStore.update((schedule) => {
 			return schedule.sort((a, b) => {
-				if (scheduleSortType === 'start-date') {
+				if ($sortedScheduleType === 'start-date') {
 					return new Date(a.from || 0).getTime() - new Date(b.from || 0).getTime();
-				} else if (scheduleSortType === 'end-date') {
+				} else if ($sortedScheduleType === 'end-date') {
 					return new Date(a.until || 0).getTime() - new Date(b.until || 0).getTime();
 				} else {
 					return 0;
 				}
 			});
 		});
-
-		$sortedScheduleType = scheduleSortType;
 	};
 
 	// get the book the user should currently be reading
@@ -206,7 +203,7 @@
 					name="schedule-sort-type"
 					id="schedule-sort-type"
 					class="select ml-1 w-fit rounded-xl bg-slate-900 p-2 px-1 text-center focus-within:border-none focus:outline-none"
-					bind:value={scheduleSortType}
+					bind:value={$sortedScheduleType}
 					onchange={handleListSort}
 				>
 					<option value="manual-sort">manual sort</option>
@@ -218,8 +215,22 @@
 		<hr class="mx-auto my-3 h-1 w-full rounded-full border-none bg-surface-500 outline-none" />
 		{#each $scheduleStore as item, index (item.book.id)}
 			<SortableItem id={item.book.id.toString()} {index}>
-				<div class="flex items-center justify-between rounded-lg bg-surface-600 px-4 py-3">
-					<div class="flex max-w-40 text-lg font-bold">
+				<div
+					class="flex items-center justify-between rounded-lg px-4 py-3 {item.hasBeenRead
+						? 'bg-green-900'
+						: 'bg-surface-600'}"
+				>
+					<div class="flex max-w-40 items-center font-bold">
+						<button
+							class="button mr-1.5 text-3xl"
+							onclick={() => (item.hasBeenRead = !item.hasBeenRead)}
+						>
+							{#if item.hasBeenRead}
+								<Icon icon="ri:checkbox-fill" />
+							{:else}
+								<Icon icon="ri:checkbox-line" />
+							{/if}
+						</button>
 						<Icon icon="mdi-book" class="mr-2 w-6 min-w-6 text-2xl" />
 						<span class="overflow-hidden text-ellipsis whitespace-nowrap">
 							{item.book.name}
@@ -273,15 +284,13 @@
 							{/key}
 						</div>
 						<div class="self-center">
-							{#key scheduleSortType}
-								{#if scheduleSortType === 'manual-sort'}
-									<Handle>
-										<div class="special-handle py-2 pl-4">
-											<Icon class="text-2xl" icon="material-symbols:drag-indicator" />
-										</div>
-									</Handle>
-								{/if}
-							{/key}
+							{#if $sortedScheduleType === 'manual-sort'}
+								<Handle>
+									<div class="special-handle py-2 pl-4">
+										<Icon class="text-2xl" icon="material-symbols:drag-indicator" />
+									</div>
+								</Handle>
+							{/if}
 						</div>
 					</div>
 				</div>
