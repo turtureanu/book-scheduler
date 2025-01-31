@@ -14,7 +14,7 @@
 		isUpdateDismissed,
 		type Schedule
 	} from '../stores/schedule';
-	import { bookStore } from '../stores/books';
+	import { bookStore, type Book } from '../stores/books';
 	import DateInput from './DateInput.svelte';
 	import { ProgressBar } from '@skeletonlabs/skeleton';
 
